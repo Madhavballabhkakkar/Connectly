@@ -1,0 +1,45 @@
+import {responsiveScreenFontSize} from 'react-native-responsive-dimensions';
+
+export const fontFamily = {
+  //// inter fonts
+  Bold: 'Gotham-Bold', //'Roboto-Bold',
+  Book: 'Gotham-Book',
+  Light: 'Gotham-Light',
+  Medium: 'Gotham-Medium',
+  CondBold: 'GothamCond-Bold',
+  CondLight: 'GothamCond-Light',
+  CondMedium: 'GothamCond-Medium',
+  Italic: 'GothamCond-XBlackItalic',
+};
+
+export const fontSize = {
+  fontSize_8: responsiveScreenFontSize(1),
+  fontSize_10: responsiveScreenFontSize(1.2),
+  fontSize_11: responsiveScreenFontSize(1.4),
+  fontSize_12: responsiveScreenFontSize(1.5),
+  fontSize_13: responsiveScreenFontSize(1.6),
+  fontSize_14: responsiveScreenFontSize(1.7),
+  fontSize_15: responsiveScreenFontSize(1.8),
+  fontSize_16: responsiveScreenFontSize(1.9),
+  fontSize_17: responsiveScreenFontSize(2),
+  fontSize_18: responsiveScreenFontSize(2.1),
+  fontSize_19: responsiveScreenFontSize(2.2),
+  fontSize_20: responsiveScreenFontSize(2.3),
+  fontSize_21: responsiveScreenFontSize(2.4),
+  fontSize_22: responsiveScreenFontSize(2.5),
+  fontSize_24: responsiveScreenFontSize(2.7),
+  fontSize_26: responsiveScreenFontSize(2.9),
+  fontSize_28: responsiveScreenFontSize(3.1),
+  fontSize_30: responsiveScreenFontSize(3.4),
+  fontSize_32: responsiveScreenFontSize(4),
+  fontSize_34: responsiveScreenFontSize(4.1),
+  fontSize_40: responsiveScreenFontSize(4.3),
+  fontSize_48: responsiveScreenFontSize(4.5),
+  fontSize_50: responsiveScreenFontSize(4.6),
+  fontSize_52: responsiveScreenFontSize(4.8),
+  fontSize_54: responsiveScreenFontSize(5),
+  fontSize_56: responsiveScreenFontSize(5.2),
+  fontSize_58: responsiveScreenFontSize(5.5),
+  fontSize_66: responsiveScreenFontSize(8.0),
+  fontSize_60: responsiveScreenFontSize(6.8),
+};
