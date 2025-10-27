@@ -21,6 +21,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {fontFamily, fontSize} from '@constants';
 import {getUserCartsAPI} from '@redux/actions';
 import {showFlashMessage} from 'components/showFlashMessage';
+import color from '@color';
 
 const FILTER_KEYS = [
   {label: 'First Name', value: 'firstName'},
@@ -43,6 +44,10 @@ const AddressBookScreen = () => {
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterKey, setFilterKey] = useState(FILTER_KEYS[0].value);
   const [filterValue, setFilterValue] = useState('');
+  const [appliedFilter, setAppliedFilter] = useState({
+    key: FILTER_KEYS[0].value,
+    value: '',
+  });
 
   useFocusEffect(
     useCallback(() => {
@@ -50,22 +55,6 @@ const AddressBookScreen = () => {
       loadAllUsers();
     }, []),
   );
-
-  const filteredUsers = useMemo(() => {
-    let list = users;
-    if (search)
-      list = list.filter(u =>
-        u.name.toLowerCase().includes(search.toLowerCase()),
-      );
-    if (filterValue)
-      list = list.filter(u =>
-        getNestedValue(u.raw, filterKey)
-          ?.toString()
-          .toLowerCase()
-          .includes(filterValue.toLowerCase()),
-      );
-    return list;
-  }, [users, search, filterKey, filterValue]);
 
   const loadFavourites = async () => {
     const favIds = await AysncStorageHelper.getFavourites();
@@ -102,8 +91,35 @@ const AddressBookScreen = () => {
   const getNestedValue = (obj: any, key: string) =>
     key.split('.').reduce((acc, part) => acc && acc[part], obj);
 
+  const filteredUsers = useMemo(() => {
+    let list = users;
+
+    if (search) {
+      list = list.filter(u =>
+        u.name.toLowerCase().includes(search.toLowerCase()),
+      );
+    }
+
+    if (appliedFilter.value) {
+      list = list.filter(u =>
+        getNestedValue(u.raw, appliedFilter.key)
+          ?.toString()
+          .toLowerCase()
+          .includes(appliedFilter.value.toLowerCase()),
+      );
+    }
+
+    return list;
+  }, [users, search, appliedFilter]);
+
   const applyFilter = () => {
-    if (!filterValue) return showFlashMessage('Please enter a value');
+    const trimmedValue = filterValue.trim();
+    if (!trimmedValue) return showFlashMessage('Please enter a value');
+
+    setAppliedFilter({
+      key: filterKey,
+      value: trimmedValue,
+    });
     setFilterVisible(false);
   };
 
@@ -135,7 +151,18 @@ const AddressBookScreen = () => {
           }}>
           <SearchBar value={search} onChangeText={setSearch} />
           <TouchableOpacity
-            onPress={() => setFilterVisible(true)}
+            onPress={() => {
+              setSearch('');
+              if (appliedFilter.value) {
+                // Clear filter if already applied
+                setAppliedFilter({key: FILTER_KEYS[0].value, value: ''});
+                setFilterKey(FILTER_KEYS[0].value);
+                setFilterValue('');
+              } else {
+                // Otherwise open filter modal
+                setFilterVisible(true);
+              }
+            }}
             style={styles.filterButton}>
             <Text style={styles.filterText}>
               {filterValue ? 'Clear' : 'Filter'}
@@ -197,6 +224,7 @@ const AddressBookScreen = () => {
                 placeholder="Enter value"
                 value={filterValue}
                 onChangeText={setFilterValue}
+                placeholderTextColor={color.grey}
               />
               <View
                 style={{
@@ -264,6 +292,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginVertical: 6,
+    color: color.black,
   },
   cancelBtn: {padding: 10},
   applyBtn: {

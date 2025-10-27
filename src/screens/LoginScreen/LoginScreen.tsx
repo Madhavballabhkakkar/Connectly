@@ -27,12 +27,17 @@ const LoginScreen = ({navigation}: any) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const gradientColors = useMemo(() => ['#ff9a9e', '#fad0c4'], []);
+
   const handleLogin = async () => {
     if (!username.trim()) return showFlashMessage('Please enter your username');
     if (!password.trim()) return showFlashMessage('Please enter your password');
 
     try {
-      const user = await loginUserAPI({username, password: password.trim()});
+      const user = await loginUserAPI({
+        username: username.trim(),
+        password: password.trim(),
+      });
       if (user) {
         await AysncStorageHelper.setUserData(user);
         Navigator.resetStackScreen(navigation, 'UserHomeStack');
@@ -42,84 +47,78 @@ const LoginScreen = ({navigation}: any) => {
     }
   };
 
-  const InputField = ({
-    label,
-    value,
-    onChangeText,
-    secureTextEntry,
-    icon,
-  }: any) => (
-    <View style={styles.inputWrapper}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder={`Enter your ${label.toLowerCase()}`}
-          placeholderTextColor="#888"
-          value={value}
-          onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry}
-          style={styles.input}
-          autoCapitalize="none"
-        />
-        {icon && (
-          <TouchableOpacity onPress={icon.onPress}>
-            {icon.component}
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
-  );
-
   return (
     <BaseWrapper
       fullScreenMode
       linearGrad
-      linearColor={['#ff9a9e', '#fad0c4']}
+      linearColor={gradientColors}
       topViewBackgroundColor="#ff9a9e">
       <KeyboardAvoidingView
         style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled">
-            <Text style={styles.title}>Welcome Back</Text>
-            <Text style={styles.subtitle}>Login to continue</Text>
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{flex: 1}}>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.scrollContent}>
+              <Text style={styles.title}>Welcome Back</Text>
+              <Text style={styles.subtitle}>Login to continue</Text>
 
-            <InputField
-              label="Username"
-              value={username}
-              onChangeText={text => setUsername(text.trim())}
-            />
-
-            <InputField
-              label="Password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-              icon={{
-                onPress: () => setShowPassword(prev => !prev),
-                component: (
-                  <Icon
-                    name={showPassword ? 'eye' : 'eye-off'}
-                    size={24}
-                    color="#999"
+              {/* Username Input */}
+              <View style={styles.inputWrapper}>
+                <Text style={styles.label}>Username</Text>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    placeholder="Enter your username"
+                    placeholderTextColor="#888"
+                    value={username}
+                    onChangeText={setUsername}
+                    style={styles.input}
+                    autoCapitalize="none"
+                    keyboardType="default"
+                    returnKeyType="next"
                   />
-                ),
-              }}
-            />
+                </View>
+              </View>
 
-            <TouchableOpacity
-              onPress={handleLogin}
-              activeOpacity={0.8}
-              style={{marginTop: Utils.calculateHeight(30)}}>
-              <LinearGradient
-                colors={['#ff6a88', '#ff99ac']}
-                style={styles.loginBtn}>
-                <Text style={styles.loginBtnText}>LOGIN</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </ScrollView>
+              {/* Password Input */}
+              <View style={styles.inputWrapper}>
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    placeholder="Enter your password"
+                    placeholderTextColor="#888"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
+                    style={styles.input}
+                    autoCapitalize="none"
+                    returnKeyType="done"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(prev => !prev)}>
+                    <Icon
+                      name={showPassword ? 'eye' : 'eye-off'}
+                      size={24}
+                      color="#999"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Login Button */}
+              <TouchableOpacity
+                onPress={handleLogin}
+                activeOpacity={0.8}
+                style={{marginTop: Utils.calculateHeight(30)}}>
+                <LinearGradient
+                  colors={['#ff6a88', '#ff99ac']}
+                  style={styles.loginBtn}>
+                  <Text style={styles.loginBtnText}>LOGIN</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </BaseWrapper>
@@ -190,20 +189,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: fontSize.fontSize_18,
     fontFamily: fontFamily.Bold,
-  },
-  signupContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: Utils.calculateHeight(24),
-  },
-  signupText: {
-    color: '#555',
-    fontFamily: fontFamily.Book,
-    fontSize: fontSize.fontSize_14,
-  },
-  signupLink: {
-    color: '#5f2c82',
-    fontFamily: fontFamily.Bold,
-    fontSize: fontSize.fontSize_14,
   },
 });
